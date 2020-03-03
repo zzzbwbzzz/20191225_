@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="gbk" />
+
+<title>电商平台后台管理</title>
+<link rel="stylesheet" href="css/bootstrap.css" />
+<link rel="stylesheet" href="css/bootstrap-responsive.css" />
+<link rel="stylesheet" href="css/styles.css" />
+<link rel="stylesheet" href="css/toastr.css" />
+<link rel="stylesheet" href="css/fullcalendar.css" />
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery.knob.js"></script>
+<script src="js/jquery.sparkline.min.js"></script>
+<script src="js/toastr.js"></script>
+<script src="js/jquery.tablesorter.min.js"></script>
+<script src="js/jquery.peity.min.js"></script>
+<script src="js/fullcalendar.min.js"></script>
+<script src="js/gcal.js"></script>
+<script src="js/setup.js"></script>
+
+</head>
+<body>
+	
+	<!-- header部分 -->
+	<div id="in-nav">
+		<div class="container">
+			<div class="row">
+				<div class="span12">
+					<ul class="pull-right">
+						<li><a href="#">链接1</a></li>
+						<li><a href="#">链接2</a></li>
+						<li><a href="#">链接3</a></li>
+						<li><a href="login.html">登录</a></li>
+					</ul>
+					<a id="logo" href="index.html">
+						<h4>
+							电商平台后台<strong>管理</strong>
+						</h4>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="in-sub-nav">
+		<div class="container">
+			<div class="row">
+				<div class="span12">
+					<ul>
+						<li><a href="index.html" class="active"><i
+								class="batch home"></i><br />主页</a></li>
+						<li><span class="label label-important pull-right">08</span><a
+							href="admins.html"><i class="batch stream"></i><br />管理员列表</a></li>
+						<li><a href="users.html"><i class="batch users"></i><br />用户列表</a></li>
+						<li><a href="categories.html"><i class="batch forms"></i><br />类别列表</a></li>
+						<li><a href="products.html"><i class="batch quill"></i><br />商品列表</a></li>
+						<li><span class="label label-important pull-right">04</span><a
+							href="orders.html"><i class="batch plane"></i><br />订单列表</a></li>
+						<li><a href="anothers.html"><i class="batch calendar"></i><br />其它扩展功能</a></li>
+						<li><a href="settings.html"><i class="batch settings"></i><br />系统设置</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page">
+	
+		<div class="page-container">
+			<div class="container">
+				<div class="row">
+					<div class="span12">
+						<h4 class="header">商品搜索结果</h4>
+						
+							<a class="btn btn-info" href="search_product_complex.html">继续搜索</a>
+			
+						<table class="table table-striped sortable">
+							<thead>
+								<tr>
+									<th>商品ID</th>
+									<th>商品名称</th>
+									<th>商品描述</th>
+									<th>商品价格</th>
+									<th>所属类别</th>
+									<th>商品主图</th>
+									<th>商品库存</th>
+                                    <th>所属状态</th>
+                                    <th>生产日期</th>
+                                    <th>操作</th>
+								</tr>
+							</thead>
+							<tbody id="shops">
+
+							</tbody>
+						</table>
+						<div class="pagination pagination-centered">
+							<ul id="pageBean">
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+		<footer>
+	<div class="container">
+		<div class="row">
+			<div class="span12">
+				<p class="pull-right">版权所有&nbsp;&nbsp;&nbsp;可以翻版</p>
+				<p>&copy; Copyright 2018 Somnus</p>
+			</div>
+		</div>
+	</div>
+	</footer>
+</body>
+<script type="text/javascript">
+
+    var href = window.location.href
+    var keyWord = decodeURI(href.split("?")[1].split("=")[1])
+    
+    
+    var currentPage = 1;
+    //分页方法
+    function page(pn, ps){
+        currentPage = pn
+        $.ajax({
+            type:"get",
+            url:"manage/product/search.do",
+            data:{
+            	proName:keyWord,
+                pageNum:pn,
+                pageSize:ps
+            },
+            dataType:"json",
+            success:function(response){
+                $("#shops").empty()
+                var dataList = response.data.list
+                for(var i = 0; i < dataList.length; i++){
+                    var trRow = $("<tr></tr>")
+                    trRow.append("<td>"+dataList[i].id + "</td>")
+                    trRow.append("<td>"+dataList[i].name + "</td>")
+                    trRow.append("<td>"+dataList[i].detail + "</td>")
+                    trRow.append("<td>"+dataList[i].price + "</td>")
+                    trRow.append("<td>"+dataList[i].category_id + "</td>")
+                    trRow.append("<td><img style='height:50px' src=/upload/"+dataList[i].main_image + "></img></td>")
+                    trRow.append("<td>"+dataList[i].stock + "</td>")
+                    var statusVal
+                    switch(dataList[i].status){
+                    case 1:
+                        statusVal = "在售"
+                        break;
+                    case 2:
+                        statusVal = "下架"
+                        break;
+                    case 3:
+                        statusVal = "删除"
+                        break;
+                    }
+                    trRow.append("<td>"+statusVal + "</td>")
+                    trRow.append("<td>"+dataList[i].create_time + "</td>")
+                    trRow.append("<div class='btn-group'><button class='btn'>操作</button><button data-toggle='dropdown' class='btn dropdown-toggle'><span class='caret'></span></button><ul class='dropdown-menu'><li><a href='#'>修改</a> <a href='#'>删除</a></li></ul></div>")
+                    $("#shops").append(trRow)
+                }
+                $("#pageBean").empty()
+                var pageMenu = response.data.navigatepageNums
+                if(currentPage == response.data.firstPage){
+                    $("#pageBean").append("<li class='disabled'><a>&laquo;</a></li>")
+                }else{
+                    $("#pageBean").append("<li onclick='page("+ (currentPage-1)+ ", 6)'><a href='#'>&laquo;</a></li>")
+                }
+                for(var i = 0; i < pageMenu.length; i++){
+                    $("#pageBean").append("<li onclick='page("+ pageMenu[i]+ ", 6)'><a>"+ pageMenu[i]+ "</a></li>")
+                }
+                if(currentPage == response.data.lastPage){
+                    $("#pageBean").append("<li class='disabled'><a>&raquo;</a></li>")
+                }else{
+                    $("#pageBean").append("<li onclick='page("+ (currentPage+1)+ ", 6)'><a href='#'>&raquo;</a></li>")
+                }
+            }
+        })
+    }
+
+    page(currentPage, 6)
+
+</script>
+<script src="js/d3-setup.js"></script>
+<script>
+	protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+	address = protocol + window.location.host + window.location.pathname
+			+ '/ws';
+	socket = new WebSocket(address);
+	socket.onmessage = function(msg) {
+		msg.data == 'reload' && window.location.reload()
+	}
+</script>
+</html>

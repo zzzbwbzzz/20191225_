@@ -1,0 +1,5 @@
+com\neusoft\entity\User.class
+com\neusoft\service\UserService.class
+com\neusoft\dao\UserDao.class
+com\neusoft\service\UserServiceImpl.class
+com\neusoft\controller\TestCon.class

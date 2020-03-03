@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.dao.GoodsDao">
+    <select id="getAllCategory" resultType="category">
+    SELECT * FROM neuedu_category WHERE parent_id = 0
+    </select>
+    <insert id="addCategory" parameterType="category">
+    INSERT INTO neuedu_category
+    (parent_id,name,status,create_time,update_time,is_leaf)
+    VALUES (#{parent_id},#{name},#{status},now(),now(),#{is_leaf})
+    </insert>
+    <select id="getCateNameByCid" resultType="string">
+    SELECT name FROM neuedu_category WHERE id = #{value}
+    </select>
+    
+    <!-- 查询当前类别的子类别 -->
+    <resultMap type="com.neusoft.entity.RCategory" id="categoryMap">
+        <id property="id" column="id"/>
+        <result column="name" property="name"/>
+        <result column="parent_id" property="parent_id"/>
+        <collection property="categories" ofType="com.neusoft.entity.RCategory" javaType="java.util.List" select="getById" column="id">
+        </collection>
+    </resultMap>
+    
+    <select id="getById" resultMap="categoryMap" parameterType="int">
+    SELECT * FROM neuedu_category
+    WHERE parent_id = #{value}
+    </select>
+    
+    <select id="getChildCateByCid" resultMap="categoryMap" parameterType="int">
+    SELECT * FROM neuedu_category
+    WHERE parent_id = #{value}
+    </select>
+    
+    <select id="getLeafCart" resultType="category">
+    SELECT * FROM neuedu_category
+    WHERE is_leaf=0
+    </select>
+    
+    <select id="getRootCate" resultType="category" parameterType="int">
+    SELECT * FROM neuedu_category
+    WHERE parent_id = #{pid}
+    </select>
+</mapper>

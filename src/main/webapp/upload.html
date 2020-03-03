@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<form id="fileForm" method="post" enctype="mutipart/form-data">
+	    <input type="file" name="file" />
+	    <a id="uploadButton">上传文件</a>
+	</form>
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript">
+    $("#uploadButton").click(function(){
+    	alert("click")
+    	var formData = new FormData($("#fileForm")[0])
+    	$.ajax({
+    		type:"post",
+    		url:"manage/product/upload.do",
+    		data:formData,
+    		dataType:"json",
+    		cache:false,
+    		processData:false,
+    		contentType:false,
+    		success:function(response){
+    			
+    		}
+    	})
+    	return false
+    })
+</script>
+</html>

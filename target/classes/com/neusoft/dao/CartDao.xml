@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.neusoft.dao.CartDao">
+    <insert id="addOneCartProduct" parameterType="cartProductVo" >
+    INSERT INTO neuedu_cart
+    (user_id,product_id,quantity,checked,create_time,update_time)
+    VALUES (#{userId},#{productId},#{quantity},1,now(),now())
+    </insert>
+    
+    <select id="getCartProductByUserId" resultType="cartProductVo" parameterType="int">
+    SELECT neuedu_cart.id,user_id 'userId',product_id 'productId',quantity,name 'productName',subtitle 'subTitle',
+    main_image 'productMainImage',price 'productPrice',status 'productStatus',stock 'productStock',checked 'productChecked'
+    FROM neuedu_cart,neuedu_product
+    WHERE neuedu_cart.product_id = neuedu_product.id
+    AND user_id = #{value}
+    </select>
+    
+    <delete id="removeOneProduct" parameterType="map">
+    DELETE FROM neuedu_cart
+    WHERE product_id = #{proId}
+    AND user_id = #{userId}
+    </delete>
+    
+    <update id="updateProFromCart" parameterType="map">
+    UPDATE neuedu_cart
+    SET quantity = #{count}
+    WHERE product_id = #{proId}
+    AND user_id = #{userId}
+    </update>
+</mapper>
